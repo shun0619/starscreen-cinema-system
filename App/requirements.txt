@@ -1,0 +1,11 @@
+# pyodbc            -- SQL Server connection (matches the SQL Server Management
+#                       Studio 2022 tech stack). Needs the "ODBC Driver 17/18 for
+#                       SQL Server" installed on your machine separately --
+#                       pip alone does not install that driver.
+# customtkinter       -- modern-looking widgets on top of tkinter (rounded
+#                       corners, dark mode, hover states)
+# matplotlib          -- charts for the Reports screen
+
+pyodbc>=5.0,<6.0
+customtkinter>=5.2,<6.0
+matplotlib>=3.8,<4.0

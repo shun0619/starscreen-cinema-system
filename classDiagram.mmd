@@ -1,0 +1,147 @@
+classDiagram
+
+    class Staff {
+        <<abstract>>
+        -string staff_id
+        -string username
+        -string password
+        -string name
+        +login()
+        +logout()
+        +getPermissions()* set
+    }
+    class Cashier {
+        +bookTicket()
+        +getPermissions() set
+    }
+    class Manager {
+        +addMovie()
+        +updateMovie()
+        +deactivateMovie()
+        +viewReports()
+        +getPermissions() set
+    }
+    Staff <|-- Cashier
+    Staff <|-- Manager
+
+    class Customer {
+        -string customer_id
+        -string name
+        -string phone
+        -string email
+        -int points
+        +updatePoints()
+        +getMembershipTier()
+    }
+    class MembershipTier {
+        -int tier_id
+        -string tier_name
+        -float discount_rate
+        -float points_per_dollar
+        -int upgrade_threshold
+        +calculateDiscount()
+        +checkUpgrade()
+    }
+    Customer "*" --> "1" MembershipTier
+
+    class Movie {
+        -string movie_id
+        -string title
+        -string genre
+        -int duration_min
+        -string rating
+        -bool is_active
+        +updateMovie()
+    }
+    class Screen {
+        -string screen_id
+        -int screen_number
+        -int capacity
+    }
+    class Screening {
+        -string screening_id
+        -date date
+        -time time
+        -string screening_type
+        +getAvailableSeats()
+    }
+    class Seat {
+        -string seat_id
+        -string row
+        -int number
+        -string seat_type
+        +seat_number()
+    }
+    class ScreeningSeat {
+        -string screening_seat_id
+        -bool is_booked
+        +reserve()
+        +release()
+    }
+    class Pricing {
+        -string pricing_id
+        -string screening_type
+        -string seat_type
+        -decimal base_price
+        +matches()
+    }
+    Movie "1" --> "*" Screening
+    Screen "1" --> "*" Screening
+    Screen "1" --> "*" Seat
+    Screening "1" --> "*" ScreeningSeat
+    Seat "1" --> "*" ScreeningSeat
+    Pricing "*" ..> "1" Screening : matched by screening_type
+    Pricing "*" ..> "1" Seat : matched by seat_type
+
+    class Booking {
+        -string booking_id
+        -datetime booking_date
+        -decimal subtotal
+        -decimal discount_amount
+        -decimal gst_amount
+        -decimal final_amount
+        -int points_earned
+        +calculateTotal()
+        +confirmBooking()
+    }
+    class BookingSeat {
+        -string booking_seat_id
+    }
+    class Payment {
+        -string payment_id
+        -string payment_method
+        -decimal amount
+        +processPayment()
+    }
+    class Receipt {
+        -string receipt_id
+        +generateReceipt()
+    }
+    Staff "1" --> "*" Booking : processes
+    Customer "1" --> "*" Booking : creates
+    Booking "1" --> "*" BookingSeat
+    BookingSeat "1" --> "1" ScreeningSeat
+    Booking "1" --> "1" Payment
+    Payment "1" --> "1" Receipt
+
+    class Report {
+        <<abstract>>
+        -string report_name
+        +generate()*
+    }
+    class RevenueReport {
+        +generate()
+    }
+    class TopMoviesReport {
+        +generate()
+    }
+    class SeatOccupancyReport {
+        +generate()
+    }
+    class MembershipDistributionReport {
+        +generate()
+    }
+    Report <|-- RevenueReport
+    Report <|-- TopMoviesReport
+    Report <|-- SeatOccupancyReport
+    Report <|-- MembershipDistributionReport

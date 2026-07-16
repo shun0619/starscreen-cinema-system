@@ -1,0 +1,9 @@
+# Virtual Environment
+App/venv/
+
+# Personal database settings -- never commit
+.env
+
+# Python bytecode
+__pycache__/
+*.pyc

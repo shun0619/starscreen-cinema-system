@@ -1,0 +1,114 @@
+erDiagram
+
+    STAFF {
+        varchar staff_id PK
+        varchar username
+        varchar password
+        varchar full_name
+        varchar role
+    }
+    MEMBERSHIP_TIER {
+        int tier_id PK
+        varchar tier_name UK
+        decimal discount_rate
+        decimal points_per_dollar
+        int upgrade_threshold
+    }
+    CUSTOMER {
+        varchar customer_id PK
+        varchar name
+        varchar phone
+        varchar email
+        int points
+        int tier_id FK
+    }
+    MEMBERSHIP_HISTORY {
+        int history_id PK
+        varchar customer_id FK
+        int old_tier_id FK
+        int new_tier_id FK
+        datetime changed_at
+    }
+    MOVIE {
+        varchar movie_id PK
+        varchar title
+        varchar genre
+        int duration_min
+        varchar rating
+        boolean is_active
+    }
+    SCREEN {
+        varchar screen_id PK
+        int screen_number UK
+        int capacity
+    }
+    SCREENING {
+        varchar screening_id PK
+        varchar movie_id FK
+        varchar screen_id FK
+        date screening_date
+        varchar screening_time "e.g. 7:00 PM"
+        varchar screening_type
+    }
+    SEAT {
+        varchar seat_id PK
+        varchar screen_id FK
+        varchar seat_number
+        varchar seat_type
+    }
+    SCREENING_SEAT {
+        varchar screening_seat_id PK "e.g. SC-01-A5"
+        varchar screening_id FK
+        varchar seat_id FK
+        boolean is_booked
+    }
+    PRICING {
+        varchar pricing_id PK
+        varchar screening_type "UNIQUE with seat_type"
+        varchar seat_type "UNIQUE with screening_type"
+        decimal base_price
+    }
+    BOOKING {
+        varchar booking_id PK
+        varchar customer_id FK "NULL for guest walk-ins"
+        varchar staff_id FK
+        datetime booking_date
+        decimal subtotal
+        decimal discount_amount
+        decimal gst_amount
+        decimal final_amount
+        int points_earned
+    }
+    BOOKING_SEAT {
+        varchar booking_seat_id PK "e.g. BK-1001-1"
+        varchar booking_id FK
+        varchar screening_seat_id FK "UNIQUE - prevents double booking"
+    }
+    PAYMENT {
+        varchar payment_id PK
+        varchar booking_id FK
+        varchar payment_method
+        decimal amount
+        datetime payment_date
+    }
+    RECEIPT {
+        varchar receipt_id PK
+        varchar booking_id FK
+        datetime issued_at
+    }
+
+    MEMBERSHIP_TIER ||--o{ CUSTOMER : assigned_to
+    CUSTOMER |o--o{ BOOKING : creates
+    STAFF ||--o{ BOOKING : processes
+    CUSTOMER ||--o{ MEMBERSHIP_HISTORY : has
+    MEMBERSHIP_TIER ||--o{ MEMBERSHIP_HISTORY : old_tier_of
+    MEMBERSHIP_TIER ||--o{ MEMBERSHIP_HISTORY : new_tier_of
+    MOVIE ||--o{ SCREENING : schedules
+    SCREEN ||--o{ SCREENING : hosts
+    SCREEN ||--o{ SEAT : contains
+    SCREENING ||--o{ SCREENING_SEAT : contains
+    SEAT ||--o{ SCREENING_SEAT : assigned_to
+    BOOKING ||--o{ BOOKING_SEAT : contains
+    SCREENING_SEAT ||--o| BOOKING_SEAT : reserved
+    BOOKING ||--|| PAYMENT : paid_by
+    BOOKING ||--|| RECEIPT : generates
