@@ -1,12 +1,4 @@
 /* ============================================================
-   StarScreen Cinemas - SQL Server schema + realistic test data
-   SOFT605 Group Assignment deliverable #2 (schema.sql)
-
-   How to run (each member, on their OWN local SQL Server):
-     1. Open this file in SSMS and press Execute (F5), or:
-        sqlcmd -S localhost\SQLEXPRESS -E -i database\schema.sql
-     2. The script is RE-RUNNABLE: it drops and recreates everything.
-
    Table owners (write the INSERTs for your own feature's tables):
      M1  STAFF
      M2  MEMBERSHIP_TIER, CUSTOMER, MEMBERSHIP_HISTORY
@@ -39,6 +31,43 @@ DROP TABLE IF EXISTS CUSTOMER;
 DROP TABLE IF EXISTS MEMBERSHIP_TIER;
 DROP TABLE IF EXISTS STAFF;
 GO
+
+/* ============================================================
+   ID & NAMING CONVENTIONS
+   ------------------------------------------------------------
+   Primary keys are readable, prefixed codes (not bare ints), so
+   every row is self-describing in queries, receipts, and the UI.
+
+   Prefix = table abbreviation (note SCR = Screen vs SC = Screening):
+     ST-01         STAFF        prefix + 2-digit sequence
+     CU-0001       CUSTOMER     prefix + 4-digit sequence
+     MV-01         MOVIE        prefix + 2-digit sequence
+     SCR-1         SCREEN       prefix + screen_number
+     PR-01         PRICING      prefix + 2-digit sequence
+     SC-01         SCREENING    prefix + 2-digit sequence
+     BK-1001       BOOKING      prefix + 4-digit (starts at 1001)
+     PAY-1001      PAYMENT      prefix + 4-digit (pairs with booking)
+
+   Composite / structural keys encode a relationship or position:
+     S1-A5         SEAT             'S' + screen_number + '-' + row + col
+     SC-01-A5      SCREENING_SEAT   screening_id + '-' + seat_number
+     BK-1001-1     BOOKING_SEAT     booking_id + '-' + line number
+     RC-BK-1001    RECEIPT          'RC-' + booking_id (1:1 with booking)
+
+   Plain integer surrogates where a readable code adds nothing:
+     tier_id       MEMBERSHIP_TIER     0..3, also the tier RANK (low->high)
+     history_id    MEMBERSHIP_HISTORY  IDENTITY(1,1) auto-increment log
+
+   Notes:
+     - Zero-pad width reflects expected volume (2-digit masters,
+       4-digit transactions) so string sorting stays in order.
+     - Transaction ids start at 1001 so they look realistic on receipts.
+     - The app generates the SAME formats (repository next_id()), so
+       sample-data mode and SQL Server mode produce identical ids.
+     - Composite keys double as self-documenting join keys (reading
+       'SC-02-A4' tells you screening SC-02, seat A4) at the cost of a
+       little redundancy with the FK columns.
+   ============================================================ */
 
 /* ============================ TABLES ============================ */
 
