@@ -4,8 +4,8 @@ Reads come from the in-memory objects (loaded from SQL Server or the
 sample data). Every change is also written through to the database
 when it is enabled -- these persist functions are no-ops otherwise.
 """
-from data.store import MOVIES, GENRES
-from data_access import db
+from store import MOVIES, GENRES
+from database import db
 
 
 def get_all():

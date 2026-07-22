@@ -1,0 +1,51 @@
+flowchart TD
+
+    Start([Staff starts a new booking]) --> Login{Staff logged in?}
+    Login -- No --> DoLogin[Staff logs in<br/>username + password]
+    DoLogin --> Login
+    Login -- Yes --> SelectScreening[Select a screening<br/>movie / date / time / screen]
+
+    SelectScreening --> LoadSeats[Load this screening's<br/>seat map]
+    LoadSeats --> LookupCustomer{Registered customer?}
+    LookupCustomer -- Yes --> SearchCustomer[Search customer<br/>load tier + points]
+    LookupCustomer -- No --> SelectGuest[Select Guest<br/>no discount, no points]
+    SearchCustomer --> SelectSeats
+    SelectGuest --> SelectSeats
+
+    SelectSeats[Select one or more seats<br/>on the seat map]
+    SelectSeats --> SeatFree{Seat already booked?}
+    SeatFree -- Yes --> SeatTakenMsg[Show 'seat already taken'<br/>remove from selection]
+    SeatTakenMsg --> SelectSeats
+    SeatFree -- No --> ShowBreakdown
+
+    ShowBreakdown["Show price breakdown<br/>subtotal / tier discount / GST 15% / total"]
+    ShowBreakdown --> ChoosePayment[Choose payment method<br/>Cash / Card / Voucher]
+
+    ChoosePayment --> IsCash{Cash selected?}
+    IsCash -- Yes --> EnterCash[Enter cash amount received]
+    EnterCash --> EnoughCash{Cash >= total?}
+    EnoughCash -- No --> CashError[Show error:<br/>not enough cash]
+    CashError --> EnterCash
+    EnoughCash -- Yes --> CalcChange[Calculate change due]
+    IsCash -- No --> ConfirmClick
+
+    CalcChange --> ConfirmClick[Staff clicks Confirm Booking]
+
+    ConfirmClick --> ReserveSeats[Reserve every selected seat]
+    ReserveSeats --> DoubleBooked{Seat taken<br/>between selection and confirm?}
+    DoubleBooked -- Yes --> ConflictError[Show error, cancel this booking<br/>seat stays taken by the other booking]
+    ConflictError --> End1([End - booking not created])
+
+    DoubleBooked -- No --> CalcTotal[Calculate final price<br/>Booking.calculateTotal]
+    CalcTotal --> AwardPoints[Award loyalty points<br/>Customer.updatePoints]
+    AwardPoints --> CheckTier{Points cross a<br/>tier threshold?}
+    CheckTier -- Yes --> UpgradeTier[Auto-upgrade tier<br/>log to Membership History]
+    CheckTier -- No --> SavePayment
+    UpgradeTier --> SavePayment
+
+    SavePayment[Process payment<br/>Payment.processPayment]
+    SavePayment --> SaveBooking[Save Booking + Payment<br/>to the database]
+    SaveBooking --> GenerateReceipt[Generate receipt<br/>itemised breakdown, points, staff name]
+    GenerateReceipt --> ShowReceipt[Display receipt to staff]
+    ShowReceipt --> SeatShown[Seat map updates:<br/>booked seat now shows as taken]
+    SeatShown --> End2([End - booking complete])

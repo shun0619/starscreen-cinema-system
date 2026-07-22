@@ -4,13 +4,13 @@ Data Access - DB loader  [M5]
 ==========================================
 Rebuilds the SAME model objects sample_data.py builds, but from the
 SQL Server rows created by database/schema.sql. It is imported only
-when db.enabled() is True (see data/store.py), loads everything once
+when db.enabled() is True (see store.py), loads everything once
 at startup, and the repositories then work on these objects exactly
 as they do with sample data. Changes are written back to the database
 by the repositories' persist functions (write-through).
 """
 
-from data_access import db
+from database import db
 from models.staff import Cashier, Manager
 from models.customer import Customer, TIERS, GUEST
 from models.movie import Movie

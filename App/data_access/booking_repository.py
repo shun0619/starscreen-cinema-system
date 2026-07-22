@@ -5,8 +5,8 @@ sample data). A confirmed booking is written to the database as ONE
 transaction (booking + seats + payment + receipt + customer update),
 so the database can never end up half-saved.
 """
-from data.store import BOOKINGS, PAYMENTS
-from data_access import db
+from store import BOOKINGS, PAYMENTS
+from database import db
 
 
 def get_all():

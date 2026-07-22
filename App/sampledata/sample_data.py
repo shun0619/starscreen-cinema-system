@@ -14,14 +14,14 @@ and reporting logic demonstrable, as the assignment requires.
 
 import datetime
 
-frommodels.staff import Cashier, Manager
-frommodels.customer import Customer, REGULAR, SILVER, GOLD, tier_for_points
-frommodels.movie import Movie
-frommodels.seat import Seat
-frommodels.screening import Screen, Screening
-frommodels.pricing import Pricing
-frommodels.booking import Booking
-frommodels.payment import Payment
+from models.staff import Cashier, Manager
+from models.customer import Customer, REGULAR, SILVER, GOLD, tier_for_points
+from models.movie import Movie
+from models.seat import Seat
+from models.screening import Screen, Screening
+from models.pricing import Pricing
+from models.booking import Booking
+from models.payment import Payment
 
 TODAY = datetime.date.today().isoformat()
 

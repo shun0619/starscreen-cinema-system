@@ -40,7 +40,6 @@ classDiagram
         -float points_per_dollar
         -int upgrade_threshold
         +calculateDiscount()
-        +checkUpgrade()
     }
     Customer "*" --> "1" MembershipTier
 
@@ -87,8 +86,8 @@ classDiagram
     }
     Movie "1" --> "*" Screening
     Screen "1" --> "*" Screening
-    Screen "1" --> "*" Seat
-    Screening "1" --> "*" ScreeningSeat
+    Screen "1" o-- "*" Seat
+    Screening "1" *-- "*" ScreeningSeat
     Seat "1" --> "*" ScreeningSeat
     Pricing "*" ..> "1" Screening : matched by screening_type
     Pricing "*" ..> "1" Seat : matched by seat_type
@@ -119,10 +118,11 @@ classDiagram
     }
     Staff "1" --> "*" Booking : processes
     Customer "1" --> "*" Booking : creates
-    Booking "1" --> "*" BookingSeat
+    Booking "1" *-- "*" BookingSeat
     BookingSeat "1" --> "1" ScreeningSeat
     Booking "1" --> "1" Payment
-    Payment "1" --> "1" Receipt
+    Booking "1" --> "1" Receipt
+    Receipt ..> Payment : reads for the printout
 
     class Report {
         <<abstract>>

@@ -1,7 +1,7 @@
 """
 Data Access - Pricing lookup  [M4]
 """
-from data.store import PRICING, get_price
+from store import PRICING, get_price
 
 
 def get_all():

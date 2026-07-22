@@ -1,6 +1,6 @@
 """
 ==========================================
-Data Access - SQL Server connection  [shared - ask team before editing]
+Database - SQL Server connection  [shared - ask team before editing]
 ==========================================
 Reads connection settings from the .env file at the project root
 (copy .env.example to .env and edit it -- .env is gitignored, so every
@@ -8,7 +8,7 @@ member points at their OWN local SQL Server without merge conflicts).
 
 If DB_ENABLED is not "true", or pyodbc / the database is unavailable,
 enabled() returns False and the whole app silently falls back to the
-in-memory sample data (data/sample_data.py). That means members who
+in-memory sample data (sampledata/sample_data.py). That means members who
 haven't installed SQL Server yet can still run and develop the app.
 """
 

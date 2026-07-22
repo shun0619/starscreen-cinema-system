@@ -1,0 +1,31 @@
+flowchart LR
+
+    Cashier(["Cashier"])
+    Manager(["Manager"])
+
+    subgraph SYS["StarScreen Cinemas - Management System"]
+        UC1(["Authenticate\nLogin / Logout"])
+        UC2(["Browse Catalogue\nmovies + screenings"])
+        UC3(["Manage Customers\nlook up, register, update,\nview booking history"])
+        UC4(["Book Ticket\nselect seats, view price\nbreakdown, pay, get receipt"])
+        UC5(["Manage Movie Catalogue\nadd, update, deactivate"])
+        UC6(["View Reports"])
+    end
+
+    Customer(["Customer"])
+
+    Cashier --> UC1
+    Cashier --> UC2
+    Cashier --> UC3
+    Cashier --> UC4
+
+    Manager --> UC1
+    Manager --> UC2
+    Manager --> UC3
+    Manager --> UC4
+    Manager --> UC5
+    Manager --> UC6
+
+    %% Customer participates only where staff act on their behalf
+    UC3 -.-> Customer
+    UC4 -.-> Customer

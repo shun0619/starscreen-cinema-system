@@ -4,8 +4,8 @@ Reads come from the in-memory objects (loaded from SQL Server or the
 sample data). Every change is also written through to the database
 when it is enabled -- the persist functions are no-ops otherwise.
 """
-from data.store import CUSTOMERS, MEMBERSHIP_HISTORY
-from data_access import db
+from store import CUSTOMERS, MEMBERSHIP_HISTORY
+from database import db
 from models.customer import TIERS
 
 

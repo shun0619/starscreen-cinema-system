@@ -1,0 +1,78 @@
+flowchart TD
+%% ============================================================
+%% StarScreen Cinemas - Module Structure Diagram (SOFT605)
+%% ============================================================
+%% Purpose: shows how the project's Python files are organised into
+%% layers, and how those layers depend on each other through imports.
+%%
+%% Layout rule: one arrow per LAYER boundary, not one per file pair.
+%% Drawing every file-to-file import (e.g. booking_screen.py ->
+%% booking_service.py) would need 30+ arrows and become unreadable,
+%% so each box lists its files as plain text and a single arrow
+%% represents "everything in this layer may call into the next layer".
+%%
+%% Dependency direction: presentation -> business logic -> domain
+%% models / data access -> data-source facade (store.py) -> SQL Server
+%% or in-memory sample data. Screens never skip a layer (e.g. a screen
+%% never imports data_access or a repository directly) - that rule is
+%% what keeps the codebase easy to split across 5 people.
+
+    %% Entry point: builds the main window and switches between screens
+    Main["main.py\n(entry point, screen switching)"]
+
+    %% Presentation Layer - one file per screen, all built with CustomTkinter
+    Screens["screens/  (Presentation Layer)\n\nlogin_screen.py dashboard_screen.py \ncustomers_screen.py movies_screen.py \nscreenings_screen.py booking_screen.py \nadmin_screen.py reports_screen.py"]
+
+    %% Shared UI building blocks reused by every screen
+    %% (BaseScreen = common sidebar+title layout, Sidebar = nav menu,
+    %% Table = the shared data-table widget)
+    Widgets["widgets/  (shared UI components)\n\nbase_screen.py \nsidebar.py \ntable.py"]
+
+    %% Business Logic Layer - validation, pricing/discount rules, and
+    %% role checks live here. Screens call these functions instead of
+    %% touching data directly.
+    BLL["business_logic/  (Business Logic Layer)\n\nauth_service.py \ncustomer_service.py \nmovie_service.py \nscreening_service.py \nbooking_service.py \nreport_service.py"]
+
+    %% Domain Model Layer - the actual OOP classes (Staff/Cashier/Manager,
+    %% Customer/MembershipTier, Movie, Screening, Seat, Booking, Payment,
+    %% Receipt, Report hierarchy). Business logic builds and calls
+    %% methods on these objects instead of editing raw data.
+    Models["models/  (Domain Model Layer)\n\nstaff.py \ncustomer.py  \nmovie.py \nscreening.py  \nseat.py \npricing.py \nbooking.py \npayment.py \nreceipt.py \nreport.py"]
+
+    %% Data Access Layer - one repository file per entity, plus db_loader.py
+    %% (rebuilds the model objects from SQL Server rows, used by store.py).
+    %% This is the ONLY layer that knows data lives in SQL Server; if
+    %% storage ever changes, only these files and store.py change.
+    DAL["data_access/  (Data Access Layer)\n\nuser_repository.py customer_repository.py \nmovie_repository.py screening_repository.py \npricing_repository.py booking_repository.py \ndb_loader.py  (builds model objects from DB rows)"]
+
+    %% Data-source facade - the single place that decides where the app's
+    %% data comes from. Repositories import their object lists from here;
+    %% store.py loads via data_access/db_loader.py when .env enables SQL
+    %% Server, otherwise it falls back to the in-memory sample data.
+    Store["store.py\n(data-source facade - picks DB or sample at startup)"]
+
+    %% SQL Server side - db.py opens the connection using the settings in
+    %% .env; schema.sql creates the 14 tables and seeds realistic test data.
+    Database[("database/  (SQL Server)\n\ndb.py \nschema.sql")]
+
+    %% Fallback side - sample_data.py builds the SAME model objects in
+    %% memory, so a member without SQL Server installed can still run
+    %% and develop every feature.
+    Sample["sampledata/\n\nsample_data.py\n(in-memory fallback objects)"]
+
+    %% Shared constants (colors, fonts, GST rate, etc.) used across
+    %% the presentation and domain layers - not part of the main
+    %% top-to-bottom dependency chain, so it's linked with dotted lines.
+    Config["config.py\n(shared colors / fonts / constants)"]
+
+    Main --> Screens
+    Screens --> Widgets
+    Screens --> BLL
+    BLL --> Models
+    BLL --> DAL
+    DAL -->|read object lists from| Store
+    Store -->|SQL Server enabled in .env| Database
+    Store -->|no DB configured| Sample
+    DAL -.->|write-through via db.py| Database
+    Config -.-> Screens
+    Config -.-> Models
