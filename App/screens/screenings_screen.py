@@ -23,7 +23,7 @@ TYPE_BADGES = {
 
 class ScreeningsScreen(BaseScreen):
 
-    title = "Screening Management"
+    title = "Screening"
 
     def build(self):
         bar = ctk.CTkFrame(self.content, fg_color="transparent")
